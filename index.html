@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>작은 불빛 하나 — 김옥현 스테파노</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;700&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; overflow:hidden; }
+
+/* ── Swiper 세로 ── */
+.swiper {
+  width: 100%;
+  height: 100vh;
+}
+.swiper-slide {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── 우측 세로 페이지네이션 ── */
+.swiper-pagination {
+  position: fixed !important;
+  right: 1.4rem !important;
+  top: 50% !important;
+  left: auto !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+  width: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 10px !important;
+  z-index: 200;
+}
+.swiper-pagination-bullet {
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 50% !important;
+  background: rgba(120,90,150,0.28) !important;
+  opacity: 1 !important;
+  margin: 0 !important;
+  cursor: pointer;
+  transition: all 0.35s ease !important;
+  display: block !important;
+}
+.swiper-pagination-bullet-active {
+  background: rgba(120,90,150,0.9) !important;
+  transform: scale(1.4) !important;
+}
+
+/* ── 하단 중앙 페이지 카운터 ── */
+.page-counter {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: rgba(100,75,130,0.55);
+  pointer-events: none;
+}
+
+/* ── 스크롤 힌트 ── */
+.scroll-hint {
+  position: absolute;
+  bottom: 3.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  opacity: 0.35;
+  animation: bounce 2.2s ease-in-out infinite;
+  z-index: 10;
+  pointer-events: none;
+}
+@keyframes bounce {
+  0%,100%{ transform:translateX(-50%) translateY(0); }
+  50%{ transform:translateX(-50%) translateY(7px); }
+}
+
+/* ── 장식 SVG ── */
+.deco-top, .deco-bottom {
+  position: absolute;
+  width: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+.deco-top { top:0; left:0; }
+.deco-bottom { bottom:0; left:0; }
+
+/* ── 중앙 텍스트 ── */
+.page-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 0 2.8rem;
+  max-width: 500px;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.swiper-slide-active .page-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.poem-date {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  font-weight: 300;
+  margin-bottom: 0.65rem;
+  opacity: 0.75;
+}
+.poem-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.45rem, 4.5vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  margin-bottom: 1.6rem;
+}
+.poem-rule {
+  width: 30px; height: 1.5px;
+  border-radius: 2px;
+  margin: 0 auto 1.7rem;
+}
+.poem-body {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(0.88rem, 2.5vw, 1.04rem);
+  line-height: 2.15;
+  font-weight: 300;
+  white-space: pre-line;
+  text-align: center;
+}
+
+/* ─────────── 표지 ─────────── */
+.slide-cover { background: linear-gradient(170deg, #fdf8f2 0%, #f8f0ea 50%, #f2ede8 100%); }
+.cover-sub { font-family:'Noto Serif KR',serif; font-size:0.83rem; letter-spacing:0.25em; color:#9a80b0; margin-bottom:1.8rem; }
+.cover-line { width:38px; height:1px; background:#c0a0d8; margin:0 auto 1.5rem; }
+.cover-author { font-family:'Noto Sans KR',sans-serif; font-size:0.92rem; letter-spacing:0.18em; color:#7a6090; }
+.cover-ded { font-family:'Noto Serif KR',serif; font-size:0.78rem; color:#a890c0; line-height:1.9; font-style:italic; margin-top:1.1rem; }
+
+/* ─────────── 시 1 민트 ─────────── */
+.slide-1 { background: linear-gradient(175deg,#edf7f2 0%,#e4f2ee 60%,#dceef8 100%); }
+.slide-1 .poem-date { color:#5a9878; }
+.slide-1 .poem-title { color:#2a6848; }
+.slide-1 .poem-rule { background:#80c4a4; }
+.slide-1 .poem-body { color:#2a4a3a; }
+
+/* ─────────── 시 2 보라 ─────────── */
+.slide-2 { background: linear-gradient(165deg,#f0ecfc 0%,#eae6f8 55%,#e4e0f4 100%); }
+.slide-2 .poem-date { color:#8070b8; }
+.slide-2 .poem-title { color:#483880; }
+.slide-2 .poem-rule { background:#a890d0; }
+.slide-2 .poem-body { color:#3a2e60; }
+
+/* ─────────── 시 3 파랑 ─────────── */
+.slide-3 { background: linear-gradient(170deg,#e6eef8 0%,#dce6f4 55%,#d0dcf0 100%); }
+.slide-3 .poem-date { color:#5878a8; }
+.slide-3 .poem-title { color:#223868; }
+.slide-3 .poem-rule { background:#7898c8; }
+.slide-3 .poem-body { color:#1e304e; }
+
+/* ─────────── 시 4 핑크 ─────────── */
+.slide-4 { background: linear-gradient(160deg,#fdf0ee 0%,#fae6e2 55%,#f8dce4 100%); }
+.slide-4 .poem-date { color:#b06878; }
+.slide-4 .poem-title { color:#783040; }
+.slide-4 .poem-rule { background:#d89098; }
+.slide-4 .poem-body { color:#502030; }
+
+/* ─────────── 시 5 황금 ─────────── */
+.slide-5 { background: linear-gradient(165deg,#fdf6e4 0%,#faf0d4 55%,#f5e8c0 100%); }
+.slide-5 .poem-date { color:#a08030; }
+.slide-5 .poem-title { color:#685010; }
+.slide-5 .poem-rule { background:#c8a840; }
+.slide-5 .poem-body { color:#3c2e08; }
+
+/* ─────────── 시 6 초록 ─────────── */
+.slide-6 { background: linear-gradient(170deg,#eef6e4 0%,#e4f0d8 55%,#d8eac8 100%); }
+.slide-6 .poem-date { color:#5a8840; }
+.slide-6 .poem-title { color:#285020; }
+.slide-6 .poem-rule { background:#80b858; }
+.slide-6 .poem-body { color:#1e3818; }
+</style>
+</head>
+<body>
+
+<div class="swiper" id="poetry-swiper">
+  <div class="swiper-wrapper">
+
+    <!-- ═══ 표지 ═══ -->
+    <div class="swiper-slide slide-cover">
+      <svg class="deco-top" viewBox="0 0 375 180" style="height:200px;" preserveAspectRatio="xMidYMin slice">
+        <ellipse cx="40" cy="30" rx="28" ry="11" fill="#d4e8c4" opacity="0.65" transform="rotate(-30,40,30)"/>
+        <ellipse cx="80" cy="14" rx="22" ry="9" fill="#c8e0b8" opacity="0.6" transform="rotate(-8,80,14)"/>
+        <ellipse cx="130" cy="8" rx="26" ry="10" fill="#d0e8c0" opacity="0.6" transform="rotate(14,130,8)"/>
+        <ellipse cx="290" cy="18" rx="24" ry="9" fill="#c8e0b8" opacity="0.58" transform="rotate(-18,290,18)"/>
+        <ellipse cx="335" cy="10" rx="28" ry="11" fill="#d4e8c4" opacity="0.65" transform="rotate(10,335,10)"/>
+        <ellipse cx="358" cy="42" rx="20" ry="8" fill="#c0d8b0" opacity="0.52" transform="rotate(30,358,42)"/>
+        <g transform="translate(32,54)">
+          <ellipse cx="0" cy="-14" rx="7" ry="12" fill="#f8e8d8" opacity="0.82" transform="rotate(0)"/>
+          <ellipse cx="0" cy="-14" rx="7" ry="12" fill="#f8e8d8" opacity="0.82" transform="rotate(60)"/>
+          <ellipse cx="0" cy="-14" rx="7" ry="12" fill="#f8e8d8" opacity="0.82" transform="rotate(120)"/>
+          <ellipse cx="0" cy="-14" rx="7" ry="12" fill="#f8e8d8" opacity="0.82" transform="rotate(180)"/>
+          <ellipse cx="0" cy="-14" rx="7" ry="12" fill="#f8e8d8" opacity="0.82" transform="rotate(240)"/>
+          <ellipse cx="0" cy="-14" rx="7" ry="12" fill="#f8e8d8" opacity="0.82" transform="rotate(300)"/>
+          <circle cx="0" cy="0" r="5" fill="#e8c890" opacity="0.88"/>
+        </g>
+        <g transform="translate(340,58) scale(0.82)">
+          <ellipse cx="0" cy="-14" rx="7" ry="12" fill="#f8e8d8" opacity="0.78" transform="rotate(0)"/>
+          <ellipse cx="0" cy="-14" rx="7" ry="12" fill="#f8e8d8" opacity="0.78" transform="rotate(72)"/>
+          <ellipse cx="0" cy="-14" rx="7" ry="12" fill="#f8e8d8" opacity="0.78" transform="rotate(144)"/>
+          <ellipse cx="0" cy="-14" rx="7" ry="12" fill="#f8e8d8" opacity="0.78" transform="rotate(216)"/>
+          <ellipse cx="0" cy="-14" rx="7" ry="12" fill="#f8e8d8" opacity="0.78" transform="rotate(288)"/>
+          <circle cx="0" cy="0" r="5" fill="#e8c890" opacity="0.82"/>
+        </g>
+        <ellipse cx="175" cy="6" rx="5" ry="8" fill="#f0ddd0" opacity="0.55"/>
+        <ellipse cx="205" cy="4" rx="4" ry="7" fill="#f0ddd0" opacity="0.48"/>
+      </svg>
+      <svg class="deco-bottom" viewBox="0 0 375 180" style="height:200px;" preserveAspectRatio="xMidYMax slice">
+        <ellipse cx="55" cy="155" rx="30" ry="12" fill="#d4e8c4" opacity="0.62" transform="rotate(20,55,155)"/>
+        <ellipse cx="95" cy="170" rx="25" ry="10" fill="#c8e0b8" opacity="0.58" transform="rotate(-10,95,170)"/>
+        <ellipse cx="282" cy="162" rx="28" ry="11" fill="#d0e8c0" opacity="0.62" transform="rotate(14,282,162)"/>
+        <ellipse cx="330" cy="170" rx="22" ry="9" fill="#c8e0b8" opacity="0.58" transform="rotate(-18,330,170)"/>
+        <g transform="translate(58,138)">
+          <ellipse cx="0" cy="-12" rx="6" ry="10" fill="#f8e8d8" opacity="0.78" transform="rotate(0)"/>
+          <ellipse cx="0" cy="-12" rx="6" ry="10" fill="#f8e8d8" opacity="0.78" transform="rotate(60)"/>
+          <ellipse cx="0" cy="-12" rx="6" ry="10" fill="#f8e8d8" opacity="0.78" transform="rotate(120)"/>
+          <ellipse cx="0" cy="-12" rx="6" ry="10" fill="#f8e8d8" opacity="0.78" transform="rotate(180)"/>
+          <ellipse cx="0" cy="-12" rx="6" ry="10" fill="#f8e8d8" opacity="0.78" transform="rotate(240)"/>
+          <ellipse cx="0" cy="-12" rx="6" ry="10" fill="#f8e8d8" opacity="0.78" transform="rotate(300)"/>
+          <circle cx="0" cy="0" r="4" fill="#e8c890" opacity="0.82"/>
+        </g>
+        <g transform="translate(320,136) scale(0.88)">
+          <ellipse cx="0" cy="-12" rx="6" ry="10" fill="#f8e8d8" opacity="0.76" transform="rotate(0)"/>
+          <ellipse cx="0" cy="-12" rx="6" ry="10" fill="#f8e8d8" opacity="0.76" transform="rotate(72)"/>
+          <ellipse cx="0" cy="-12" rx="6" ry="10" fill="#f8e8d8" opacity="0.76" transform="rotate(144)"/>
+          <ellipse cx="0" cy="-12" rx="6" ry="10" fill="#f8e8d8" opacity="0.76" transform="rotate(216)"/>
+          <ellipse cx="0" cy="-12" rx="6" ry="10" fill="#f8e8d8" opacity="0.76" transform="rotate(288)"/>
+          <circle cx="0" cy="0" r="4" fill="#e8c890" opacity="0.82"/>
+        </g>
+      </svg>
+      <div class="page-content">
+        <div style="font-size:2.6rem;margin-bottom:1.5rem;">🕯️</div>
+        <div class="poem-title" style="color:#5a4060;">작은 불빛 하나</div>
+        <div class="cover-sub">시집</div>
+        <div class="cover-line"></div>
+        <div class="cover-author">김옥현 스테파노</div>
+        <div class="cover-ded">신비로운 하루하루에 감사하며<br>사랑하는 가족에게</div>
+      </div>
+      <div class="scroll-hint" style="color:#9a80b0;">▽</div>
+    </div>
+
+    <!-- ═══ 시 1: 있음에 대하여 ═══ -->
+    <div class="swiper-slide slide-1">
+      <svg class="deco-top" viewBox="0 0 375 170" style="height:185px;" preserveAspectRatio="none">
+        <path d="M0,170 Q60,65 120,92 Q180,118 240,52 Q300,12 375,72 L375,0 L0,0Z" fill="#b8dfc8" opacity="0.28"/>
+        <path d="M0,170 Q80,92 160,112 Q240,132 320,72 Q350,52 375,82 L375,0 L0,0Z" fill="#a0cfb8" opacity="0.18"/>
+        <g opacity="0.48">
+          <ellipse cx="62" cy="42" rx="36" ry="14" fill="#ffffff"/>
+          <ellipse cx="82" cy="36" rx="25" ry="11" fill="#ffffff"/>
+          <ellipse cx="42" cy="40" rx="20" ry="10" fill="#ffffff"/>
+        </g>
+        <g opacity="0.38">
+          <ellipse cx="278" cy="27" rx="42" ry="15" fill="#ffffff"/>
+          <ellipse cx="304" cy="21" rx="28" ry="12" fill="#ffffff"/>
+          <ellipse cx="258" cy="26" rx="22" ry="10" fill="#ffffff"/>
+        </g>
+        <circle cx="152" cy="16" r="2" fill="#80c4a4" opacity="0.58"/>
+        <circle cx="202" cy="9" r="1.5" fill="#80c4a4" opacity="0.48"/>
+        <circle cx="102" cy="13" r="1.5" fill="#80c4a4" opacity="0.48"/>
+      </svg>
+      <svg class="deco-bottom" viewBox="0 0 375 155" style="height:160px;" preserveAspectRatio="none">
+        <path d="M0,78 Q60,40 120,58 Q180,78 240,38 Q300,8 375,48 L375,155 L0,155Z" fill="#b0d8a0" opacity="0.28"/>
+        <path d="M0,98 Q90,68 180,83 Q270,98 375,68 L375,155 L0,155Z" fill="#98c888" opacity="0.2"/>
+        <path d="M20,155 Q22,128 18,108" stroke="#80b870" stroke-width="1.5" fill="none" opacity="0.55"/>
+        <path d="M36,155 Q41,122 46,106" stroke="#80b870" stroke-width="1.5" fill="none" opacity="0.48"/>
+        <path d="M340,155 Q338,126 342,108" stroke="#80b870" stroke-width="1.5" fill="none" opacity="0.55"/>
+        <path d="M358,155 Q355,130 352,110" stroke="#80b870" stroke-width="1.5" fill="none" opacity="0.48"/>
+      </svg>
+      <div class="page-content">
+        <div class="poem-date">2025년 5월 10일</div>
+        <div class="poem-title">있음에 대하여</div>
+        <div class="poem-rule"></div>
+        <div class="poem-body">그저 웃고 숨쉬는 것으로 족하다.
+산이 있다.
+물이 있다.
+해와 달과 별이 있다.
+여기에 모든 필요가 있다.
+산과 구름 파란 하늘
+무엇이 더 필요한가
+허상을 쫓는 욕심 끝이 없다.
+하느님 나라는 가벼울수록 좋다.</div>
+      </div>
+      <div class="scroll-hint" style="color:#5a9878;">▽</div>
+    </div>
+
+    <!-- ═══ 시 2: 신비여! ═══ -->
+    <div class="swiper-slide slide-2">
+      <svg class="deco-top" viewBox="0 0 375 175" style="height:190px;" preserveAspectRatio="none">
+        <defs>
+          <radialGradient id="mg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#f8e890" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#f8e890" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="188" cy="58" r="52" fill="url(#mg)"/>
+        <circle cx="185" cy="54" r="28" fill="#f5e080" opacity="0.52"/>
+        <circle cx="198" cy="48" r="23" fill="#ece8f8" opacity="0.88"/>
+        <circle cx="62" cy="22" r="2.5" fill="#d0b8e8" opacity="0.68"/>
+        <circle cx="102" cy="42" r="1.5" fill="#d0b8e8" opacity="0.58"/>
+        <circle cx="42" cy="57" r="2" fill="#d0b8e8" opacity="0.48"/>
+        <circle cx="278" cy="17" r="3" fill="#d0b8e8" opacity="0.68"/>
+        <circle cx="308" cy="47" r="2" fill="#d0b8e8" opacity="0.58"/>
+        <circle cx="338" cy="27" r="1.5" fill="#d0b8e8" opacity="0.52"/>
+        <circle cx="132" cy="14" r="2" fill="#c8a8e0" opacity="0.58"/>
+        <circle cx="242" cy="32" r="1.5" fill="#c8a8e0" opacity="0.48"/>
+        <g opacity="0.33">
+          <ellipse cx="82" cy="92" rx="45" ry="16" fill="#e0d8f4"/>
+          <ellipse cx="107" cy="85" rx="30" ry="13" fill="#e0d8f4"/>
+        </g>
+        <g opacity="0.28">
+          <ellipse cx="298" cy="77" rx="50" ry="18" fill="#e0d8f4"/>
+          <ellipse cx="318" cy="70" rx="32" ry="14" fill="#e0d8f4"/>
+        </g>
+      </svg>
+      <svg class="deco-bottom" viewBox="0 0 375 155" style="height:158px;" preserveAspectRatio="none">
+        <path d="M0,118 Q90,78 188,98 Q280,113 375,83 L375,155 L0,155Z" fill="#c8b8e8" opacity="0.23"/>
+        <path d="M0,138 Q80,108 188,123 Q280,136 375,108 L375,155 L0,155Z" fill="#b8a8d8" opacity="0.18"/>
+        <circle cx="32" cy="128" r="1.5" fill="#a890d0" opacity="0.48"/>
+        <circle cx="82" cy="143" r="1" fill="#a890d0" opacity="0.38"/>
+        <circle cx="348" cy="126" r="1.5" fill="#a890d0" opacity="0.48"/>
+        <circle cx="298" cy="146" r="1" fill="#a890d0" opacity="0.38"/>
+        <circle cx="188" cy="133" r="2" fill="#b8a0e0" opacity="0.38"/>
+      </svg>
+      <div class="page-content">
+        <div class="poem-date">2025년 6월 17일</div>
+        <div class="poem-title">신비여 !</div>
+        <div class="poem-rule"></div>
+        <div class="poem-body">세상이 하느님 신비로 가득하네
+바람이 산바위에 계곡을 만드네
+물결이 거친 바위를 둥글게 다듬네
+
+해와 달이 뜨고 지면
+온갖 생명이 명멸하네
+
+사자 고래 모두 다
+사람 손안에 있네
+날고 기고 뛰는 사람
+하느님 손안에 있네
+
+사람은 신비체 초록점
+신비에서 신비로 이어지네.
+경외하고 겸손한 사람
+신비속에 사는거라네</div>
+      </div>
+      <div class="scroll-hint" style="color:#8070b8;">▽</div>
+    </div>
+
+    <!-- ═══ 시 3: 天界 ═══ -->
+    <div class="swiper-slide slide-3">
+      <svg class="deco-top" viewBox="0 0 375 185" style="height:200px;" preserveAspectRatio="none">
+        <path d="M0,185 L82,62 L142,112 L202,32 L262,92 L322,52 L375,102 L375,0 L0,0Z" fill="#c8d8f0" opacity="0.38"/>
+        <path d="M82,62 L102,82 L67,82Z" fill="#ffffff" opacity="0.72"/>
+        <path d="M202,32 L232,67 L177,67Z" fill="#ffffff" opacity="0.78"/>
+        <path d="M322,52 L347,82 L302,82Z" fill="#ffffff" opacity="0.68"/>
+        <g opacity="0.42">
+          <ellipse cx="52" cy="122" rx="38" ry="13" fill="#d8e4f4"/>
+          <ellipse cx="74" cy="116" rx="25" ry="11" fill="#d8e4f4"/>
+        </g>
+        <g opacity="0.38">
+          <ellipse cx="308" cy="132" rx="42" ry="14" fill="#d8e4f4"/>
+          <ellipse cx="286" cy="126" rx="26" ry="11" fill="#d8e4f4"/>
+        </g>
+        <circle cx="188" cy="20" r="3" fill="#f0e8a0" opacity="0.68"/>
+        <circle cx="152" cy="11" r="1.5" fill="#c8d8f4" opacity="0.58"/>
+        <circle cx="228" cy="13" r="1.5" fill="#c8d8f4" opacity="0.48"/>
+      </svg>
+      <svg class="deco-bottom" viewBox="0 0 375 155" style="height:155px;" preserveAspectRatio="none">
+        <path d="M0,98 Q90,68 188,83 Q280,98 375,73 L375,155 L0,155Z" fill="#c8d4ec" opacity="0.28"/>
+        <path d="M0,123 Q90,98 188,110 Q280,120 375,98 L375,155 L0,155Z" fill="#b8c8e4" opacity="0.2"/>
+        <ellipse cx="157" cy="136" rx="5" ry="7" fill="#a8b8d8" opacity="0.32" transform="rotate(-15,157,136)"/>
+        <ellipse cx="177" cy="128" rx="5" ry="7" fill="#a8b8d8" opacity="0.28" transform="rotate(15,177,128)"/>
+        <ellipse cx="197" cy="138" rx="5" ry="7" fill="#a8b8d8" opacity="0.25" transform="rotate(-10,197,138)"/>
+        <ellipse cx="217" cy="130" rx="4" ry="6" fill="#a8b8d8" opacity="0.2" transform="rotate(12,217,130)"/>
+      </svg>
+      <div class="page-content">
+        <div class="poem-date">2025년 7월 24일</div>
+        <div class="poem-title">天　界</div>
+        <div class="poem-rule"></div>
+        <div class="poem-body">에베레스트, K2 산정상을
+휘감고있는 구름위에 앉아
+나를 정면으로 바라본다.
+
+나는 누구인가?
+
+어둠속에서만 빛나는 별인가?
+하계로 소풍나온 천사인가?
+말씀에 어깃장 놓는 악마인가?
+
+사랑, 그 속에 모든 것이
+다 있거늘 늘 거슬러 살아왔다.
+이제 한 생을 뒤로 하고
+본향으로 돌아가 바람이 되리라.
+
+나는 모래 위 발자국
+하나의 점에 불과했다.</div>
+      </div>
+      <div class="scroll-hint" style="color:#5878a8;">▽</div>
+    </div>
+
+    <!-- ═══ 시 4: 황혼 모임 ═══ -->
+    <div class="swiper-slide slide-4">
+      <svg class="deco-top" viewBox="0 0 375 175" style="height:190px;" preserveAspectRatio="none">
+        <ellipse cx="32" cy="36" rx="32" ry="12" fill="#d4b8b0" opacity="0.38" transform="rotate(-25,32,36)"/>
+        <ellipse cx="343" cy="31" rx="30" ry="11" fill="#d4b8b0" opacity="0.38" transform="rotate(20,343,31)"/>
+        <ellipse cx="102" cy="13" rx="24" ry="9" fill="#c8a8a4" opacity="0.33" transform="rotate(10,102,13)"/>
+        <ellipse cx="273" cy="11" rx="22" ry="8" fill="#c8a8a4" opacity="0.33" transform="rotate(-8,273,11)"/>
+        <g transform="translate(57,67)">
+          <circle cx="0" cy="0" r="19" fill="#f0b0b8" opacity="0.52"/>
+          <circle cx="0" cy="0" r="14" fill="#eca0a8" opacity="0.62"/>
+          <circle cx="0" cy="0" r="9" fill="#e88898" opacity="0.72"/>
+          <circle cx="0" cy="0" r="4" fill="#e07080" opacity="0.78"/>
+        </g>
+        <g transform="translate(313,60) scale(0.78)">
+          <circle cx="0" cy="0" r="19" fill="#f0b0b8" opacity="0.48"/>
+          <circle cx="0" cy="0" r="14" fill="#eca0a8" opacity="0.58"/>
+          <circle cx="0" cy="0" r="9" fill="#e88898" opacity="0.68"/>
+          <circle cx="0" cy="0" r="4" fill="#e07080" opacity="0.73"/>
+        </g>
+        <g transform="translate(188,32) scale(0.68)">
+          <circle cx="0" cy="0" r="19" fill="#f4c0c4" opacity="0.42"/>
+          <circle cx="0" cy="0" r="14" fill="#f0b0b8" opacity="0.52"/>
+          <circle cx="0" cy="0" r="7" fill="#eca0a8" opacity="0.62"/>
+        </g>
+        <path d="M0,160 Q188,102 375,142 L375,0 L0,0Z" fill="#f8c8a0" opacity="0.08"/>
+      </svg>
+      <svg class="deco-bottom" viewBox="0 0 375 155" style="height:158px;" preserveAspectRatio="none">
+        <path d="M0,78 Q90,53 188,68 Q280,82 375,58 L375,155 L0,155Z" fill="#f0a8a8" opacity="0.2"/>
+        <path d="M0,108 Q90,83 188,96 Q280,108 375,86 L375,155 L0,155Z" fill="#e898a0" opacity="0.16"/>
+        <g transform="translate(173,110)" opacity="0.16">
+          <ellipse cx="0" cy="0" rx="16" ry="8" fill="#c07080"/>
+          <path d="M-16,0 L-14,18 Q0,22 14,18 L16,0Z" fill="#c07080"/>
+          <path d="M16,5 Q24,5 24,10 Q24,15 16,14" stroke="#c07080" stroke-width="2" fill="none"/>
+        </g>
+      </svg>
+      <div class="page-content">
+        <div class="poem-date">2025년 8월 7일</div>
+        <div class="poem-title">황혼 모임</div>
+        <div class="poem-rule"></div>
+        <div class="poem-body">몸단장 곱게 하고
+가슴에 장미향기 가득하게
+이마에 예쁜 하트 그려넣고
+
+듣는 지혜
+웃는 연습 많이 하고
+춘향이 걸음으로 사뿐히 오시게
+
+몇 안남은 사랑하는 친구여
+시간 전에 도착하거든
+찻집이 어디있는지 보아두게나
+
+못다한 이야기 있거들랑
+여운으로 남겨두고
+땅거미 내리기 전에
+돌아와야 하느니</div>
+      </div>
+      <div class="scroll-hint" style="color:#b06878;">▽</div>
+    </div>
+
+    <!-- ═══ 시 5: 추석 ═══ -->
+    <div class="swiper-slide slide-5">
+      <svg class="deco-top" viewBox="0 0 375 185" style="height:200px;" preserveAspectRatio="none">
+        <defs>
+          <radialGradient id="fm" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#fff8d0" stop-opacity="0.88"/>
+            <stop offset="60%" stop-color="#f8e888" stop-opacity="0.65"/>
+            <stop offset="100%" stop-color="#f8e888" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="188" cy="67" r="72" fill="url(#fm)"/>
+        <circle cx="188" cy="64" r="39" fill="#fef4c0" opacity="0.82"/>
+        <circle cx="188" cy="64" r="36" fill="#fef8d0" opacity="0.68"/>
+        <circle cx="175" cy="57" r="6" fill="#f4e898" opacity="0.38"/>
+        <circle cx="198" cy="70" r="4" fill="#f4e898" opacity="0.32"/>
+        <g transform="translate(42,185)" opacity="0.52">
+          <rect x="-4" y="-72" width="8" height="72" fill="#a07840"/>
+          <polygon points="0,-102 -28,-52 28,-52" fill="#408050"/>
+          <polygon points="0,-82 -24,-40 24,-40" fill="#508858"/>
+          <polygon points="0,-62 -20,-27 20,-27" fill="#609860"/>
+        </g>
+        <g transform="translate(333,185) scale(0.83)" opacity="0.48">
+          <rect x="-4" y="-72" width="8" height="72" fill="#a07840"/>
+          <polygon points="0,-102 -28,-52 28,-52" fill="#408050"/>
+          <polygon points="0,-82 -24,-40 24,-40" fill="#508858"/>
+          <polygon points="0,-62 -20,-27 20,-27" fill="#609860"/>
+        </g>
+      </svg>
+      <svg class="deco-bottom" viewBox="0 0 375 155" style="height:158px;" preserveAspectRatio="none">
+        <path d="M0,98 Q90,68 188,83 Q280,98 375,73 L375,155 L0,155Z" fill="#e8c870" opacity="0.18"/>
+        <path d="M0,128 Q90,106 188,116 Q280,126 375,106 L375,155 L0,155Z" fill="#d8b848" opacity="0.14"/>
+        <path d="M12,155 Q17,128 14,110" stroke="#b0a040" stroke-width="1.5" fill="none" opacity="0.38"/>
+        <path d="M363,155 Q358,130 361,112" stroke="#b0a040" stroke-width="1.5" fill="none" opacity="0.38"/>
+      </svg>
+      <div class="page-content">
+        <div class="poem-date">2025년 10월 1일</div>
+        <div class="poem-title">추석</div>
+        <div class="poem-rule"></div>
+        <div class="poem-body">그저 보고만 있어도
+배가 불렀다
+
+소나무 큰가지 사이로
+솟아 오른 보름달
+뭐가 더 필요하랴
+
+주면 넉넉해지고
+줄수록 늘어나는
+역수학의 법칙
+
+보름달은 항상
+내 가슴에 있다</div>
+      </div>
+      <div class="scroll-hint" style="color:#a08030;">▽</div>
+    </div>
+
+    <!-- ═══ 시 6: 반딧불 ═══ -->
+    <div class="swiper-slide slide-6">
+      <svg class="deco-top" viewBox="0 0 375 185" style="height:200px;" preserveAspectRatio="none">
+        <ellipse cx="52" cy="26" rx="35" ry="13" fill="#90c870" opacity="0.48" transform="rotate(-20,52,26)"/>
+        <ellipse cx="97" cy="11" rx="28" ry="11" fill="#a0d880" opacity="0.43" transform="rotate(5,97,11)"/>
+        <ellipse cx="152" cy="19" rx="22" ry="9" fill="#88c068" opacity="0.38" transform="rotate(15,152,19)"/>
+        <ellipse cx="308" cy="21" rx="32" ry="12" fill="#90c870" opacity="0.48" transform="rotate(15,308,21)"/>
+        <ellipse cx="353" cy="36" rx="26" ry="10" fill="#a0d880" opacity="0.43" transform="rotate(-10,353,36)"/>
+        <circle cx="82" cy="82" r="3" fill="#d8f060" opacity="0.68"/>
+        <circle cx="82" cy="82" r="9" fill="#c8e040" opacity="0.18"/>
+        <circle cx="147" cy="57" r="2.5" fill="#d0e850" opacity="0.63"/>
+        <circle cx="147" cy="57" r="7.5" fill="#c0d838" opacity="0.16"/>
+        <circle cx="232" cy="72" r="3" fill="#d8f060" opacity="0.58"/>
+        <circle cx="232" cy="72" r="9" fill="#c8e040" opacity="0.14"/>
+        <circle cx="298" cy="52" r="2" fill="#d0e850" opacity="0.58"/>
+        <circle cx="298" cy="52" r="6" fill="#c0d838" opacity="0.13"/>
+        <circle cx="188" cy="42" r="2.5" fill="#d8f060" opacity="0.52"/>
+        <circle cx="188" cy="42" r="7" fill="#c8e040" opacity="0.11"/>
+        <path d="M0,102 Q40,62 72,82 Q92,94 122,72" stroke="#70a050" stroke-width="2" fill="none" opacity="0.38"/>
+        <path d="M375,92 Q338,57 308,77 Q288,90 263,67" stroke="#70a050" stroke-width="2" fill="none" opacity="0.38"/>
+      </svg>
+      <svg class="deco-bottom" viewBox="0 0 375 155" style="height:158px;" preserveAspectRatio="none">
+        <path d="M0,88 Q90,58 188,73 Q280,88 375,63 L375,155 L0,155Z" fill="#98c870" opacity="0.26"/>
+        <path d="M0,113 Q90,88 188,103 Q280,116 375,93 L375,155 L0,155Z" fill="#80b858" opacity="0.2"/>
+        <path d="M17,155 Q20,133 16,113" stroke="#60a040" stroke-width="1.5" fill="none" opacity="0.48"/>
+        <path d="M32,155 Q37,128 42,110" stroke="#60a040" stroke-width="1.5" fill="none" opacity="0.42"/>
+        <path d="M348,155 Q345,131 349,112" stroke="#60a040" stroke-width="1.5" fill="none" opacity="0.48"/>
+        <path d="M360,155 Q356,133 353,114" stroke="#60a040" stroke-width="1.5" fill="none" opacity="0.42"/>
+        <path d="M188,155 Q190,136 187,118" stroke="#60a040" stroke-width="1.5" fill="none" opacity="0.38"/>
+        <circle cx="102" cy="118" r="2.5" fill="#c8e040" opacity="0.48"/>
+        <circle cx="102" cy="118" r="7" fill="#c8e040" opacity="0.1"/>
+        <circle cx="268" cy="113" r="2" fill="#c8e040" opacity="0.43"/>
+        <circle cx="268" cy="113" r="6" fill="#c8e040" opacity="0.09"/>
+      </svg>
+      <div class="page-content">
+        <div class="poem-date">2026년 4월 15일</div>
+        <div class="poem-title">반딧불</div>
+        <div class="poem-rule"></div>
+        <div class="poem-body">아이들이 뛰어 논다
+하하호호 웃음이 번진다
+어둠속에서 작은 불빛이
+튀어 오른다
+
+어른들이 따뜻한 녹차를 마신다
+왁자지껄 이야기가 흐른다
+
+저녁처럼 번지는 목소리들
+집안 가득 따뜻한 불빛
+
+보성 할머니집 마당에는
+작은 불빛이 떠다닌다
+
+조용히 아주 조용히
+숨쉬듯 깜박이며
+
+그 빛 하나 스치면
+어린날이 돌아오고
+
+어둠속에서도
+길을 잃지 않게 하는
+작은 마음 하나가 켜진다</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 우측 세로 페이지네이션 -->
+  <div class="swiper-pagination"></div>
+</div>
+
+<!-- 하단 중앙 페이지 카운터 -->
+<div class="page-counter" id="page-counter">1 / 7</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"></script>
+<script>
+var counter = document.getElementById('page-counter');
+
+var swiper = new Swiper('#poetry-swiper', {
+  direction: 'vertical',
+  loop: false,
+  speed: 750,
+  grabCursor: true,
+  mousewheel: { sensitivity: 1, thresholdDelta: 30 },
+  keyboard: { enabled: true, onlyInViewport: true },
+  pagination: {
+    el: '.swiper-pagination',
+    clickable: true,
+    type: 'bullets'
+  },
+  on: {
+    slideChange: function () {
+      counter.textContent = (this.activeIndex + 1) + ' / ' + this.slides.length;
+    }
+  }
+});
+
+counter.textContent = '1 / ' + swiper.slides.length;
+</script>
+</body>
+</html>
